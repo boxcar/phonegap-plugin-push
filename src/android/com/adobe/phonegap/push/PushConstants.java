@@ -54,4 +54,8 @@ public interface PushConstants {
     public static final String GCM = "GCM";
     public static final String CONTENT_AVAILABLE = "content-available";
     public static final String TOPICS = "topics";
+    public static final String APS_ALERT = "aps-alert";
+    public static final String APS_BADGE = "aps-badge";
+    public static final String APS_SOUND = "aps-sound";
+    public static final String I = "i";
 }

@@ -110,12 +110,14 @@ public class GCMIntentService extends GcmListenerService implements PushConstant
      * Replace alternate keys with our canonical value
      */
     private String normalizeKey(String key) {
-        if (key.equals(BODY) || key.equals(ALERT) || key.equals(GCM_NOTIFICATION_BODY)) {
+        if (key.equals(APS_ALERT) || key.equals(BODY) || key.equals(ALERT) || key.equals(GCM_NOTIFICATION_BODY)) {
             return MESSAGE;
-        } else if (key.equals(MSGCNT) || key.equals(BADGE)) {
+        } else if (key.equals(APS_BADGE) || key.equals(MSGCNT) || key.equals(BADGE)) {
             return COUNT;
-        } else if (key.equals(SOUNDNAME)) {
+        } else if (key.equals(APS_SOUND) || key.equals(SOUNDNAME)) {
             return SOUND;
+        } else if (key.equals(I)) {
+            return NOT_ID;
         } else if (key.startsWith(GCM_NOTIFICATION)) {
             return key.substring(GCM_NOTIFICATION.length()+1, key.length());
         } else if (key.startsWith(GCM_N)) {
@@ -202,8 +204,9 @@ public class GCMIntentService extends GcmListenerService implements PushConstant
         Log.d(LOG_TAG, "title =[" + title + "]");
         Log.d(LOG_TAG, "contentAvailable =[" + contentAvailable + "]");
 
-        if ((message != null && message.length() != 0) ||
-                (title != null && title.length() != 0)) {
+        if (!("1".equals(contentAvailable)) &&
+            ((message != null && message.length() != 0) ||
+             (title != null && title.length() != 0))) {
 
             Log.d(LOG_TAG, "create notification");
 
@@ -221,6 +224,10 @@ public class GCMIntentService extends GcmListenerService implements PushConstant
         String appName = getAppName(this);
         String packageName = context.getPackageName();
         Resources resources = context.getResources();
+        String title = extras.getString(TITLE);
+
+        if (title == null)
+            title = appName;
 
         int notId = parseInt(NOT_ID, extras);
         Intent notificationIntent = new Intent(this, PushHandlerActivity.class);
@@ -234,8 +241,8 @@ public class GCMIntentService extends GcmListenerService implements PushConstant
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(context)
                         .setWhen(System.currentTimeMillis())
-                        .setContentTitle(extras.getString(TITLE))
-                        .setTicker(extras.getString(TITLE))
+                        .setContentTitle(title)
+                        .setTicker(title)
                         .setContentIntent(contentIntent)
                         .setAutoCancel(true);
 
